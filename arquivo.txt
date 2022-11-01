@@ -1,0 +1,4 @@
+arquivo.txt
+
+
+Eu consegui ler um arquivo

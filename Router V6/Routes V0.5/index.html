@@ -1,0 +1,107 @@
+<html>
+	<head> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta http-equiv="Content-Language" content="pt-br">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="estilo.css">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+	</head>  
+	<body> 
+ 		<ul id="menu"> 
+			
+			<img id="logo" src="./imgs/logo.jpg">
+		</ul>
+		<section>
+			<aside id=tools>
+				<button id="importButton" type="button">Imp</button>
+				<button id="exportGroups" type="button">Exp</button>
+				<img id="requestGroupsViewIcon" src="./imgs/icons/novoGrupo.png">
+			</aside>
+			<main id="workspace">
+				<div id="requestGroups">
+					<div id="requestBox">
+					 	<div>
+						    <p>Quantos grupos gostaria</p>
+						    <input id="grupsCount" type="number" value="10">
+						</div>
+					    <div>
+					    	<p>Qual o tamanho dos grupos</p>
+					    	<input id="grupsSize" type="number" value="6">
+					    </div>
+					  	<div>
+					 		<button id="cancelRequestGroups" onclick="cancelRequestGroups()">Cancelar</button>
+					  		<button id="askGroups" onclick="requestGroups()">Solicitar</button>
+					  	</div>
+				  	</div>
+				</div>
+				<div id="simpleTools">
+					<img class="iconViews" id="quadrantesIcom" src="./imgs/icons/squares.png">
+					<img class="iconViews" id="mapaIcom" src="./imgs/icons/map.png">
+ 					<img class="iconViews" id="groupIcom" src="./imgs/icons/group.png">
+				</div>
+				
+				<div id="table" class="view">
+					<table id="hidTable">
+						<tr id="labes">
+							<th>Id</th>
+							<th>Lat</th>
+							<th>Long</th>
+							<th>Data</th>
+						</tr>
+					</table>
+				</div>
+
+				<div id="mapa" class="view">
+					<div id="map"></div>
+				</div>
+
+				<div id="quadrantes" class="view">
+					<div id="quadInfo"></div>
+					<div id="quadMap"></div>
+				</div>
+
+				<div id="quadList" class="view">
+					
+				</div>
+
+				<div id="group" class="view">
+					<div id="listGroup">
+						<div id="dataList"></div> 
+					</div>
+					<div id="makeGroups"></div>
+				</div>
+
+				<div id="debug" class="view"></div>
+				<div id="import" class="view">
+					<div id="importFile">
+						<input type="file" id="dados" value="Imp">
+						<button id="preview">Preview</button>
+					</div>
+					<div id="previewData">
+						<div id="previewTable"></div>
+						<div id="configPreview">
+							<p>Divisor de linha:</p>
+							<input id="lineDivisor" type="text" value="\n">
+							<p>Divisor de valor:</p>
+							<input id="valueDivisor" type="text" value=",">
+
+
+							<button id="refheshPreview"class="previewBtn">Refresh</button>
+							<button id="importFile-button" class="previewBtn">Continuar</button>
+						</div>
+					</div>
+				</div>
+			</main>
+		</section>
+		<script>
+			
+		</script>
+		<script src="script.js"></script>
+		<script src="newScript.js"></script>
+	 	<script src="mapa.js"></script>
+		<script src="backendoDoFrontend.js"></script>
+		<script src="geoQuadrantes.js"></script>
+
+	</body>
+</html> 
