@@ -10,9 +10,52 @@ dis = dis.map((d) => {
 // <div><p id="vazao">0</p><span>Média</span></div>
 
 class Distrito{
-	
-	constructor(geojson){
+	constructor(feature, mapa){
+		this.name = feature.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+		//this.mapa = mapa;
+		this.properties = {...feature.properties}
+		this.objects = [];
 
+		this.style = {
+			"color": "#ff7800",
+			"weight": 2,
+			"opacity": 0.65
+		};
+		
+		this.i = L.geoJSON(feature, {style: this.style, onEachFeature: this.onEachFeature}).addTo(mapa);
+	}
+
+	onEachFeature(feature, layer){
+		function zoomToFeature(e){
+			let distName = e.target.feature.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+			//console.log(clase.distritos[distName]);
+			displayDistStat(distName);
+			clase.mapa.fitBounds(e.target.getBounds());
+		}
+		function resetHighlight(e) {
+			
+			//clase.geoMapa.resetStyle(e.target);
+		}
+		function highlightFeature(e){
+			var layer = e.target;
+				layer.setStyle({
+				weight: 5,
+				color: '#666',
+				dashArray: '',
+				fillOpacity: 0.2,
+			});
+
+
+			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+				layer.bringToFront();
+			}
+		}
+
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
 	}
 }
 
@@ -26,62 +69,21 @@ class Distrito{
 
 class Distritos{
 	constructor(mapa, geojson = bairros){
-		this.distritos = {};
-		this.distritosNomes = [];
+		this.distritos = [];
 		this.mapa = mapa;
 		this.geoMapa = [];
 		this.statistcs = {};
 
 
 		this.initDistricts(geojson);
-		console.log('Class Noo loaded!');
+		console.log('Class distritos loaded!');
 	}	
 
 	initDistricts(geojson){
 		
-		
-	
-		function onEachFeature(feature, layer) {
-			function zoomToFeature(e){
-				let distName = e.target.feature.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-				//console.log(clase.distritos[distName]);
-				displayDistStat(distName);
-			    clase.mapa.fitBounds(e.target.getBounds());
-			}
-			function resetHighlight(e) {
-			    
-			    //clase.geoMapa.resetStyle(e.target);
-			}
-			function highlightFeature(e){
-			    var layer = e.target;
-
-			    layer.setStyle({
-			        weight: 5,
-			        color: '#666',
-			        dashArray: '',
-			        fillOpacity: 0.2,
-			    });
-
-			    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-			        layer.bringToFront();
-			    }
-			}
-
-		    layer.on({
-		        mouseover: highlightFeature,
-		        mouseout: resetHighlight,
-		        click: zoomToFeature
-		    });
-
-		}
 
 		for(let i in geojson.features){
 			let geo = geojson.features[i];
-			let distrito = {
-				...geo.properties,
-				feature: geo,
-				objects: [],
-			}
 
 			var myStyle = {
 				"color": (i%2 == 0)?"#ff7800":"#427ef5",
@@ -89,25 +91,10 @@ class Distritos{
 				"opacity": 0.65
 			};
 
-			if(i < 10){
-				this.geoMapa.push(L.geoJSON(geo, {style: myStyle, onEachFeature: onEachFeature}).addTo(this.mapa));
-
-			}
-			let distName = geo.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-			this.distritos[distName] = distrito;
-			this.distritosNomes.push(distName);
+			this.distritos.push(new Distrito(geo, this.mapa));
 		}
-
-		
-
-		let clase = this; 
-		//this.geoMapa = L.geoJSON(geojson, {style: myStyle, onEachFeature: onEachFeature}).addTo(this.mapa);
 	}
 
-	drawDistrict(){
-		L.geoJSON(geojsonFeature).addTo(map);
-	}
 
 	loadObjects(objects){
 		let countObjsNotLoad = 0;
