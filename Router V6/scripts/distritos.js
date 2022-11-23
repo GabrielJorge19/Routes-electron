@@ -1,87 +1,48 @@
-let dis = ['ÁGUA RASA', 'ALTO DE PINHEIROS', 'ARICANDUVA', 'ARTUR ALVIM', 'BARRA FUNDA', 'BELA VISTA', 'BELÉM', 'BOM RETIRO', 'BRÁS', 'BRASILÂNDIA', 'BUTANTÃ', 'CACHOEIRINHA', 'CAMBUCI', 'CAMPO BELO', 'CAMPO GRANDE', 'CAMPO LIMPO', 'CANGAIBA', 'CAPÃO REDONDO', 'CARRÃO', 'CASA VERDE', 'CIDADE ADEMAR', 'CIDADE DUTRA', 'CIDADE TIRADENTES', 'CONSOLAÇÃO', 'CURSINO', 'ERMELINO MATARAZZO', 'FREGUESIA DO Ó', 'GRAJAÚ', 'IPIRANGA', 'ITAIM BIBI', 'ITAIM PAULISTA', 'ITAQUERA', 'JABAQUARA', 'JAGUARA', 'JAGUARÉ', 'JARAGUÁ', 'JARDIM HELENA', 'JARDIM PAULISTA', 'JARDIM SÃO LUÍS', 'JOSÉ BONIFÁCIO', 'LAPA', 'LIBERDADE', 'LIMÃO', 'MANDAQUI', 'MOEMA', 'MOOCA', 'PARELHEIROS', 'PARI', 'PEDREIRA', 'PENHA', 'PERDIZES', 'PERUS', 'PINHEIROS', 'PIRITUBA', 'PONTE RASA', 'REPÚBLICA', 'RIO PEQUENO', 'SACOMÃ', 'SANTA CECÍLIA', 'SANTANA', 'SANTO AMARO', 'SÃO DOMINGOS', 'SÃO LUCAS', 'SÃO MATEUS', 'SAPOPEMBA', 'SAÚDE', 'SÉ', 'TATUAPÉ', 'TREMEMBÉ', 'TUCURUVI', 'VILA ANDRADE', 'VILA FORMOSA', 'VILA GUILHERME', 'VILA JACUÍ', 'VILA LEOPOLDINA', 'VILA MARIA', 'VILA MARIANA', 'VILA MATILDE', 'VILA MEDEIROS', 'VILA PRUDENTE', 'VILA SÔNIA'];
-dis = dis.map((d) => {
-	return d.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-})
-
-
-
-
-
-// <div><p id="vazao">0</p><span>Média</span></div>
-
-class Distrito{
-	constructor(feature, mapa){
-		this.name = feature.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-		//this.mapa = mapa;
-		this.properties = {...feature.properties}
-		this.objects = [];
-
-		this.style = {
-			"color": "#ff7800",
-			"weight": 2,
-			"opacity": 0.65
-		};
-		
-		this.i = L.geoJSON(feature, {style: this.style, onEachFeature: this.onEachFeature}).addTo(mapa);
-	}
-
-	onEachFeature(feature, layer){
-		function zoomToFeature(e){
-			let distName = e.target.feature.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-			//console.log(clase.distritos[distName]);
-			displayDistStat(distName);
-			clase.mapa.fitBounds(e.target.getBounds());
-		}
-		function resetHighlight(e) {
-			
-			//clase.geoMapa.resetStyle(e.target);
-		}
-		function highlightFeature(e){
-			var layer = e.target;
-				layer.setStyle({
-				weight: 5,
-				color: '#666',
-				dashArray: '',
-				fillOpacity: 0.2,
-			});
-
-
-			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-				layer.bringToFront();
-			}
-		}
-
-		layer.on({
-			mouseover: highlightFeature,
-			mouseout: resetHighlight,
-			click: zoomToFeature
-		});
-	}
-}
-
-
-
-
-
-
-
-
-
 class Distritos{
-	constructor(mapa, geojson = bairros){
+	constructor(geojson = bairros){
+		this.nomeDosDistritosNormalizado = ['ÁGUA RASA', 'ALTO DE PINHEIROS', 'ARICANDUVA', 'ARTUR ALVIM', 'BARRA FUNDA', 'BELA VISTA', 'BELÉM', 'BOM RETIRO', 'BRÁS', 'BRASILÂNDIA', 'BUTANTÃ', 'CACHOEIRINHA', 'CAMBUCI', 'CAMPO BELO', 'CAMPO GRANDE', 'CAMPO LIMPO', 'CANGAIBA', 'CAPÃO REDONDO', 'CARRÃO', 'CASA VERDE', 'CIDADE ADEMAR', 'CIDADE DUTRA', 'CIDADE TIRADENTES', 'CONSOLAÇÃO', 'CURSINO', 'ERMELINO MATARAZZO', 'FREGUESIA DO Ó', 'GRAJAÚ', 'IPIRANGA', 'ITAIM BIBI', 'ITAIM PAULISTA', 'ITAQUERA', 'JABAQUARA', 'JAGUARA', 'JAGUARÉ', 'JARAGUÁ', 'JARDIM HELENA', 'JARDIM PAULISTA', 'JARDIM SÃO LUÍS', 'JOSÉ BONIFÁCIO', 'LAPA', 'LIBERDADE', 'LIMÃO', 'MANDAQUI', 'MOEMA', 'MOOCA', 'PARELHEIROS', 'PARI', 'PEDREIRA', 'PENHA', 'PERDIZES', 'PERUS', 'PINHEIROS', 'PIRITUBA', 'PONTE RASA', 'REPÚBLICA', 'RIO PEQUENO', 'SACOMÃ', 'SANTA CECÍLIA', 'SANTANA', 'SANTO AMARO', 'SÃO DOMINGOS', 'SÃO LUCAS', 'SÃO MATEUS', 'SAPOPEMBA', 'SAÚDE', 'SÉ', 'TATUAPÉ', 'TREMEMBÉ', 'TUCURUVI', 'VILA ANDRADE', 'VILA FORMOSA', 'VILA GUILHERME', 'VILA JACUÍ', 'VILA LEOPOLDINA', 'VILA MARIA', 'VILA MARIANA', 'VILA MATILDE', 'VILA MEDEIROS', 'VILA PRUDENTE', 'VILA SÔNIA'].map((d) => {return d.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase()})
 		this.distritos = [];
-		this.mapa = mapa;
+		this.mapa = L.map('map', {zoomControl: false}).setView([-23.555500310051162, -46.63212091504849], 10);
 		this.geoMapa = [];
-		this.statistcs = {};
-
-
+		
 		this.initDistricts(geojson);
 		console.log('Class distritos loaded!');
 	}	
 
-	initDistricts(geojson){
-		
+	showTileLayer(){
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(this.mapa);
+	}
 
+	displayObjects(objs){
+		let icons = [];
+
+		objs.map((obj) => {
+			icons.push(this.getIcon(obj.lat, obj.long).addTo(this.mapa));
+		})
+
+		return icons;
+	}
+
+	getIcon(lat, long, number = ''){
+		var icon = L.divIcon({
+			className: 'my-div-icon', 
+			html: `<div><div id='icon-circle'>${number}</div><div id='icon-line'></div></div>`, 
+			iconSize: [20, 31],
+			iconAnchor: [10, 31],
+			popupAnchor: [0, -55]
+		});
+
+		return  L.marker([lat, long], {icon: icon});
+	}
+
+	findLocation(lat, long){
+		mapa.setView([lat, long]);
+		let marker = L.marker([lat, long], {icon: icones['green']}).addTo(this.mapa);
+	}
+
+	initDistricts(geojson){
 		for(let i in geojson.features){
 			let geo = geojson.features[i];
 
@@ -95,93 +56,59 @@ class Distritos{
 		}
 	}
 
+	getObjects(ids){
+		let objs = [];
+
+		this.distritos.map((distrito) => {
+			objs = objs.concat(distrito.getObjects(ids));
+		})
+
+		return this.orderObjsById(objs);
+	}
+
+	orderObjsById(objs){
+		objs.sort((a, b) => {
+			if(a.id < b.id){return -1;}
+			if(a.id > b.id){return 1;}
+			return 0;
+		});
+
+		return objs;
+	}
 
 	loadObjects(objects){
 		let countObjsNotLoad = 0;
 		let countLoadedObjs = 0;
 
-		for(let id in objects){
-			let obj = objects[id];
-			let distrito = obj.distrito.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-			let dist = this.distritos[distrito];
+		this.distritos.map((distrito) => {
+			let objs = objects.filter((obj) => {
+				return obj.distrito == distrito.name;
+			});
 
-			// o texto do distrito nao é normalizado a tempo e os valores considerados são os valores com acentos
-			// obs: a função funcioa
-
-
-			if(dist){
-				dist.objects[id] = obj;
-				countLoadedObjs++;
-			} else {
-				countObjsNotLoad++;
-				//console.log("ERRO: " + distrito);
-			}
-		}
-
-		let distritos = Object.keys(this.distritos);
-		for(let i in distritos){
-			this.calcStatistics(distritos[i]);
-		}
-		console.log("Loaded " + countLoadedObjs + " and not loaded: " + countObjsNotLoad);
+			distrito.addObjects(this.orderObjsById(objs));
+		});
 	}
 
-	calcStatistics(distName){
-		let objs = this.distritos[distName].objects;
-		let stat = {bairro: {}, tipo: {}, vazao: {}, situacao: {}, countObjs: 0, title: distName,}
-		let statistcsColuns = ["bairro", "tipo", "vazao", "situacao"];
+	colorDistricts(){
+		let maxObjectsCount = 0;
+		this.distritos.map((distrito) => {
+			if(distrito.objects.length > maxObjectsCount){maxObjectsCount = distrito.objects.length;}
+		})
 
-		for(let id in objs){
-			let obj = objs[id];
-			for(let i = 0;i < statistcsColuns.length;i++){
-				let label = statistcsColuns[i];
-				let value = stat[label][obj[label]];
-				stat[label][obj[label]] = (value == undefined)?1:++value;
-			}
-			stat.countObjs++;
+		this.distritos.map((distrito) => {
+			let color = getColor(distrito.objects.length, maxObjectsCount);
+			distrito.setStyle({color, opacity: 1, weight: 1, fillOpacity: .5});
+		})	
+
+		function getColor(a, b){
+			let d = Math.floor(a/(b/5));
+
+			return d > 4 ? '#000' :
+	           d > 3  ? '#BD0026' :
+	           d > 2  ? '#E31A1C' :
+	           d > 1  ? '#FC4E2A' : '#0f8890';
 		}
-		this.statistcs[distName] = stat;
-	}
-
-	getDistStat(distName){
-		let testStat = {
-			bairro: {
-				'alto do ipiranga': 2,
-				ipiranga: 1,
-				'sacomã': 1,
-				'vila independ�ncia': 1,
-				'vila monumento': 1,
-				'vila s�o jos�': 1,
-			},
-			countObjs: 7,
-			title: 'Ipiranga',
-			situacao: {
-				inoperante: 4,
-				'possivel de uso': 3,
-			},
-			tipo: {
-				subterraneo: 7,
-			},
-			vazao: {
-				fraca: 1,
-				média: 2,
-				seco: 4,
-			}
-		}
-
-		//return testStat;
-		return this.statistcs[distName];
 	}
 }
  
 
-let bad;
-setTimeout(() => {
-	bad = new Distritos(mapa, bairros);
-}, 200); 
-
-setTimeout(() => {
-	bad.loadObjects(objects);
-}, 400); 
-
-
-//	bad.geoMapa._layers[21].setStyle({color: '#000'});

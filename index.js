@@ -17,6 +17,7 @@ const createWindow = () => {
   })
 
   win.loadFile('./Router V6/index.html');
+  win.maximize();
 }
 
 app.on('ready', () => {

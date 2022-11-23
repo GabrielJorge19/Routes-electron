@@ -32,8 +32,8 @@
 	padding: 0px;
 }
 #icon-circle{
-	font-size: 13px;
 	color: white;
+	font-size: 9px;
 	width: 11;
 	height: 11;
 	border-radius: 50%;
@@ -41,7 +41,6 @@
 	text-align: center;
 	border: 1px solid black;
 	margin: 0px auto;
-	
 }
 #icon-line{
 	background-color: black;
