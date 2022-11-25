@@ -1,18 +1,27 @@
-let tr;
-
 class Distrito{
 	constructor(feature, mapa){
 		feature.distrito = this;
 		this.name = feature.properties.NOME_DIST.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+		this.mapa = mapa;
 		this.properties = {...feature.properties}
 		this.objects = [];
-		this.statistcs = {}
 		//this.style = {"color": "#0015ff","weight": 1,"opacity": .5};
-		this.layer = L.geoJSON(feature, {style: this.style, onEachFeature: this.onEachFeature}).addTo(mapa);
+		this.layer = L.geoJSON(feature, {style: this.style, onEachFeature: this.onEachFeature});
 	}
 
 	addObjects(objs){
 		this.objects = this.objects.concat(objs);
+		this.calcStatistics();
+	}
+	hide(){
+		this.layer._map.removeLayer(this.layer);
+	}
+	show(){
+		this.layer.addTo(this.mapa);
+	}
+
+	showObjects(options){
+		devDisplayObjects(this.objects);
 	}
 
 	getObjects(ids){
@@ -31,7 +40,7 @@ class Distrito{
 			this._map.fitBounds(e.target.getBounds());
 
 			let dist = feature.distrito;
-			console.log(dist.name, dist.objects.length);
+			console.log(dist.name, dist.getStatistics());
 		}
 
 		function mouseout(e) {
@@ -62,61 +71,30 @@ class Distrito{
 		this.layer.setStyle(style);
 	}
 
-	calcStatistics(distName){
-		let objs = this.distritos[distName].objects;
-		let stat = {bairro: {}, tipo: {}, vazao: {}, situacao: {}, countObjs: 0, title: distName,}
+	calcStatistics(){
 		let statistcsColuns = ["bairro", "tipo", "vazao", "situacao"];
+		let stat = {}
 
-		for(let id in objs){
-			let obj = objs[id];
-			for(let i = 0;i < statistcsColuns.length;i++){
-				let label = statistcsColuns[i];
-				let value = stat[label][obj[label]];
-				stat[label][obj[label]] = (value == undefined)?1:++value;
-			}
-			stat.countObjs++;
-		}
-		this.statistcs[distName] = stat;
+		statistcsColuns.map((label) => {
+			stat[label] = {};
+		});
+
+		this.objects.map((obj) => {
+			statistcsColuns.map((label) => {
+				if(stat[label][obj[label]] == undefined){
+					stat[label][obj[label]] = 1;
+				} else {
+					stat[label][obj[label]]++;
+				}
+			})
+		})
+
+		stat.length = this.objects.length;
+
+		this.statistcs = stat;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-	getDistStat(distName){
-		let testStat = {
-			bairro: {
-				'alto do ipiranga': 2,
-				ipiranga: 1,
-				'sacomã': 1,
-				'vila independ�ncia': 1,
-				'vila monumento': 1,
-				'vila s�o jos�': 1,
-			},
-			countObjs: 7,
-			title: 'Ipiranga',
-			situacao: {
-				inoperante: 4,
-				'possivel de uso': 3,
-			},
-			tipo: {
-				subterraneo: 7,
-			},
-			vazao: {
-				fraca: 1,
-				média: 2,
-				seco: 4,
-			}
-		}
-
-		//return testStat;
-		return this.statistcs[distName];
+	getStatistics(){
+		return this.statistcs;
 	}
 }

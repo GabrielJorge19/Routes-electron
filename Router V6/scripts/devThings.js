@@ -4,11 +4,11 @@ let aside;
 setTimeout(() => {
 	bad = new Distritos(bairros);
 	aside = new Aside();
-}, 200); 
+}, 100); 
 
 setTimeout(() => {
 	bad.loadObjects(objects);
-}, 400); 
+}, 200); 
 
 
 
@@ -18,7 +18,8 @@ setTimeout(() => {
 setTimeout(() => {
 	console.clear();
 	bad.colorDistricts();
-}, 800); 
+	bad.calcStatistics();
+}, 400); 
 
 
 

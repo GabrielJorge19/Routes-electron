@@ -6,7 +6,8 @@ let planComp = __dirname + '/todos hidrantes.csv';
 // geojson._layers[50].feature.properties.NOME_DIST;
 
 class HandleObjects{
-	constructor(url = planTeste){
+	//constructor(url = planTeste){
+	constructor(url = planComp){
 		this.local = url;
 		this.objects = this.loadObjects();
 
