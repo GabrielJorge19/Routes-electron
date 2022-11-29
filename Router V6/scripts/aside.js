@@ -1,6 +1,8 @@
 class Aside{
-	constructor(){
+	constructor(mapa){
+		this.mapa = mapa;
 		this.objectDom = $('aside');
+		this.setEventListeners();
 	}
 
 	showAside(callback){
@@ -20,4 +22,22 @@ class Aside{
 			})
 		});
 	}
+
+	setEventListeners(){
+		document.getElementById('searchBar').addEventListener('keydown', (event) => {
+			if(event.keyCode == 13){
+				let targetValues = event.target.value.replaceAll(' ', ',').split(',');
+				targetValues = targetValues.map((svalue) => {return parseInt(svalue)})
+				let objs = this.mapa.getObjects(targetValues);
+				objs.map(obj => obj.show());
+				event.target.value = '';
+			}
+		});
+	}
 }
+
+/*
+distrito
+hidrante
+grupo
+*/

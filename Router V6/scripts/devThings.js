@@ -1,9 +1,9 @@
 let bad;
-let aside;
+//let aside;
 
 setTimeout(() => {
-	bad = new Distritos(bairros);
-	aside = new Aside();
+	bad = new Mapa(bairros);
+	//aside = new Aside();
 }, 100); 
 
 setTimeout(() => {
@@ -23,19 +23,15 @@ setTimeout(() => {
 
 
 
+function exportObjs(){
+	let ids = "";
 
-let icons = [];
-
-function devDisplayObjects(objs){
-	icons = icons.concat(bad.displayObjects(objs));
-}
-
-function devRemoveObjects(){
-	icons.map((icon) => {
-		bad.mapa.removeLayer(icon);
+	bad.selectedObjs.map((obj) =>{
+		ids += obj.id + '\n';
+		obj.hide();
 	});
 
-	icons = [];
+	//bad.selectedObjs = [];
+	bad.selectedObjs.splice(0, bad.selectedObjs.length);
+	console.log(ids);
 }
-
-
