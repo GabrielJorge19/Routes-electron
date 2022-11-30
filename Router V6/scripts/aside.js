@@ -3,6 +3,9 @@ class Aside{
 		this.mapa = mapa;
 		this.objectDom = $('aside');
 		this.setEventListeners();
+		
+		
+		
 	}
 
 	showAside(callback){
@@ -33,6 +36,21 @@ class Aside{
 				event.target.value = '';
 			}
 		});
+	}
+
+	setLegend(){
+		let legend = document.getElementById('legend');
+		let max = this.mapa.statistcs.maxDistObjsCount;
+		let colors = this.mapa.colors;
+		let colorGroupSize = Math.round(max/colors.length);
+
+		colors.map((color, index) => {
+			let lineDiv = document.createElement('div');
+			lineDiv.innerHTML = `<p>${index * colorGroupSize + 1} - ${(index+1) * colorGroupSize}</p>`;
+			lineDiv.className = "legend-line";
+			lineDiv.style.backgroundColor = `${color}aa`;
+			legend.appendChild(lineDiv);
+		})
 	}
 }
 

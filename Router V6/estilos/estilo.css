@@ -25,6 +25,36 @@
 	z-index: 9999;
 }
 
+#legend {
+	position: fixed;
+	width: 15vw;
+	right: 10px;
+	top: 10px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-bottom: 5px;
+	border-radius: 10px;
+}
+
+.legend-line {
+	width: 70%;
+	background-color: rgba(0, 0, 0, .3);
+	display: flex;
+	padding: 1% 10%;
+	margin-top: 5px;
+	border-radius: 10px;
+	align-items: center;
+	border: 1px solid black;
+}
+
+.legend-line p {
+	width: 100%;
+	text-align: center;
+
+}
+
 .my-div-icon{
 	display: flex;
 	flex-direction: row;

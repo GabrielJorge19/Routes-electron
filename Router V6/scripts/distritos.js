@@ -5,11 +5,13 @@ class Mapa{
 		this.mapa = L.map('map', {zoomControl: false}).setView([-23.555500310051162, -46.63212091504849], 10);
 		this.stretsLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'})
 		this.selectedObjs = [];
+		this.colors = ['#008080', '#20B2AA', '#48D1CC', '#836FFF', '#483D8B'];
 		this.initDistricts(geojson);
 		console.log('Class distritos loaded!');
 	}	
 
-	showTileLayer(){		this.stretsLayer.addTo(this.mapa);
+	showTileLayer(){		
+		this.stretsLayer.addTo(this.mapa);
 	}
 	hideTileLayer(){
 		this.mapa.removeLayer(this.stretsLayer);
@@ -21,7 +23,7 @@ class Mapa{
 		this.distritos.map((dist) => {dist.hide();})
 	}
 	calcStatistics(){
-		let stats = {length: 0}
+		let stats = {length: 0, maxDistObjsCount: 0}
 		let labels = ["tipo", "vazao", "situacao"];
 		labels.map((label) => {
 			stats[label] = {}
@@ -29,7 +31,7 @@ class Mapa{
 
 		this.distritos.map((distrito) => {
 			let distStats = distrito.getStatistics();
-
+			if(stats.maxDistObjsCount < distStats.length) stats.maxDistObjsCount = distStats.length;
 			stats.length += distStats.length;
 			
 			labels.map((label) => {
@@ -50,10 +52,6 @@ class Mapa{
 	displayObjects(objs){
 		objs.map((obj) => {obj.show();})
 	}
-	findLocation(lat, long){
-		//mapa.setView([lat, long]);
-		//let marker = L.marker([lat, long], {icon: icones['green']}).addTo(this.mapa);
-	}
 	initDistricts(geojson){
 		for(let i in geojson.features){
 			let geo = geojson.features[i];
@@ -66,7 +64,6 @@ class Mapa{
 
 			this.distritos.push(new Distrito(geo, this.mapa));
 		}
-
 		this.show();
 	}
 	getObjects(ids){
@@ -88,9 +85,6 @@ class Mapa{
 		return objs;
 	}
 	loadObjects(objects){
-		let countObjsNotLoad = 0;
-		let countLoadedObjs = 0;
-
 		objects = objects.map((obj) => {
 			return new Hidrante({...obj, mapa: this.mapa, selectedObjs: this.selectedObjs});
 		});
@@ -112,18 +106,14 @@ class Mapa{
 		})
 
 		this.distritos.map((distrito) => {
-			let color = getColor(distrito.objects.length, maxObjectsCount);
+			let color = this.colorScale(distrito.objects.length);
 			distrito.setStyle({color, opacity: 1, weight: 1, fillOpacity: .5});
-		})	
-
-		function getColor(a, b){
-			let d = Math.floor(a/(b/5));
-
-			return d > 4 ? '#000' :
-	           d > 3  ? '#BD0026' :
-	           d > 2  ? '#E31A1C' :
-	           d > 1  ? '#FC4E2A' : '#0f8890';
-		}
+		})
+	}
+	colorScale(value, max = this.statistcs.maxDistObjsCount, colors = this.colors){
+		let colorGroupSize = Math.round(max/colors.length);
+		let index = Math.floor(value/colorGroupSize);
+		return colors[index];
 	}
 }
  

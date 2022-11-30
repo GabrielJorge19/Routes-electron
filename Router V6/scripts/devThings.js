@@ -1,9 +1,7 @@
 let bad;
-//let aside;
 
 setTimeout(() => {
 	bad = new Mapa(bairros);
-	//aside = new Aside();
 }, 100); 
 
 setTimeout(() => {
@@ -11,14 +9,14 @@ setTimeout(() => {
 }, 200); 
 
 
-
-
-
+setTimeout(() => {
+	bad.calcStatistics();
+	//console.clear();
+}, 300); 
 
 setTimeout(() => {
-	console.clear();
 	bad.colorDistricts();
-	bad.calcStatistics();
+	bad.aside.setLegend();
 }, 400); 
 
 
