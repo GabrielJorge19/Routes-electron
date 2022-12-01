@@ -36,6 +36,7 @@
 	align-items: center;
 	padding-bottom: 5px;
 	border-radius: 10px;
+	z-index: 9999;
 }
 
 .legend-line {
@@ -47,12 +48,12 @@
 	border-radius: 10px;
 	align-items: center;
 	border: 1px solid black;
+	justify-content: center;
 }
 
-.legend-line p {
-	width: 100%;
-	text-align: center;
-
+.legend-line:hover{
+	cursor: pointer;
+	transform: scale(1.1); 
 }
 
 .my-div-icon{

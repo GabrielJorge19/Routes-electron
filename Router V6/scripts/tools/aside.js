@@ -2,10 +2,7 @@ class Aside{
 	constructor(mapa){
 		this.mapa = mapa;
 		this.objectDom = $('aside');
-		this.setEventListeners();
-		
-		
-		
+		this.setEventListeners();	
 	}
 
 	showAside(callback){
@@ -38,21 +35,37 @@ class Aside{
 		});
 	}
 
-	setLegend(){
-		let legend = document.getElementById('legend');
-		let max = this.mapa.statistcs.maxDistObjsCount;
-		let colors = this.mapa.colors;
-		let colorGroupSize = Math.round(max/colors.length);
+	
 
-		colors.map((color, index) => {
-			let lineDiv = document.createElement('div');
-			lineDiv.innerHTML = `<p>${index * colorGroupSize + 1} - ${(index+1) * colorGroupSize}</p>`;
-			lineDiv.className = "legend-line";
-			lineDiv.style.backgroundColor = `${color}aa`;
-			legend.appendChild(lineDiv);
-		})
+	overLengend(event){
+		console.log("Sobre legenda", event.target);
+	}
+	legendClick(event){
+		console.log("Legenda clicada ", event.target);
+
 	}
 }
+let pp;
+
+
+/*
+
+	elemento
+	mapa (distritos e cores)
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
 
 /*
 distrito

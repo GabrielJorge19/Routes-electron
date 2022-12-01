@@ -1,22 +1,20 @@
-let bad;
+let ff = (obj) => {return true};
+let tt = obj => {return obj.id < 1000};
+let ino = obj => {return obj.situacao == 'inoperante'};
+let leg;
 
-setTimeout(() => {
-	bad = new Mapa(bairros);
-}, 100); 
-
-setTimeout(() => {
-	bad.loadObjects(objects);
-}, 200); 
+ $(document).ready(function() { console.log('loaded') });
 
 
 setTimeout(() => {
-	bad.calcStatistics();
+	//bad.calcStatistics();
+	//leg = new Legenda(mapa);
 	//console.clear();
 }, 300); 
 
 setTimeout(() => {
-	bad.colorDistricts();
-	bad.aside.setLegend();
+	//mapa.colorDistricts();
+	
 }, 400); 
 
 

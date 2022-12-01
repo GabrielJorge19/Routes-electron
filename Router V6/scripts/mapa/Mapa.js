@@ -1,12 +1,13 @@
 class Mapa{
 	constructor(geojson = bairros){
+		this.colors = ['#008080', '#20B2AA', '#48D1CC', '#836FFF', '#483D8B'];
+		this.legenda = new Legenda(this);
 		this.aside = new Aside(this);
 		this.distritos = [];
 		this.mapa = L.map('map', {zoomControl: false}).setView([-23.555500310051162, -46.63212091504849], 10);
 		this.stretsLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'})
 		this.selectedObjs = [];
-		this.colors = ['#008080', '#20B2AA', '#48D1CC', '#836FFF', '#483D8B'];
-		this.initDistricts(geojson);
+		this.createDistricts(geojson);
 		console.log('Class distritos loaded!');
 	}	
 
@@ -48,11 +49,13 @@ class Mapa{
 		})
 
 		this.statistcs = stats;
+		let filterFunction = obj => {return true}
+		this.classifyDistricts(filterFunction);
 	}
 	displayObjects(objs){
 		objs.map((obj) => {obj.show();})
 	}
-	initDistricts(geojson){
+	createDistricts(geojson){
 		for(let i in geojson.features){
 			let geo = geojson.features[i];
 
@@ -64,7 +67,8 @@ class Mapa{
 
 			this.distritos.push(new Distrito(geo, this.mapa));
 		}
-		this.show();
+
+		this.loadObjects(objects);
 	}
 	getObjects(ids){
 		let objs = [];
@@ -98,21 +102,28 @@ class Mapa{
 		});
 
 		console.log('loaded');
+		this.calcStatistics();
 	}
-	colorDistricts(){
+	classifyDistricts(filterFunction){
 		let maxObjectsCount = 0;
 		this.distritos.map((distrito) => {
-			if(distrito.objects.length > maxObjectsCount){maxObjectsCount = distrito.objects.length;}
+			let filteredObjs = distrito.objects.filter(filterFunction).length
+			if(filteredObjs > maxObjectsCount){maxObjectsCount = filteredObjs;}
 		})
 
 		this.distritos.map((distrito) => {
-			let color = this.colorScale(distrito.objects.length);
+			let objCount = distrito.objects.filter(filterFunction).length;
+			let color = this.colorScale(objCount, maxObjectsCount);
 			distrito.setStyle({color, opacity: 1, weight: 1, fillOpacity: .5});
+			distrito.show();
 		})
+
+		this.legenda.update(maxObjectsCount);
 	}
 	colorScale(value, max = this.statistcs.maxDistObjsCount, colors = this.colors){
-		let colorGroupSize = Math.round(max/colors.length);
+		let colorGroupSize = Math.floor(max/colors.length) + 1;
 		let index = Math.floor(value/colorGroupSize);
+		if(index < 0 || index >= colors.length) console.log(index, value, colorGroupSize);
 		return colors[index];
 	}
 }
