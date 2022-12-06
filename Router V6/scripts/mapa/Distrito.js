@@ -5,7 +5,6 @@ class Distrito{
 		this.mapa = mapa;
 		this.properties = {...feature.properties}
 		this.objects = [];
-		//this.style = {"color": "#0015ff","weight": 1,"opacity": .5};
 		this.layer = L.geoJSON(feature, {style: this.style, onEachFeature: this.onEachFeature});
 	}
 
@@ -67,6 +66,7 @@ class Distrito{
 	}
 
 	setStyle(style){
+		//style = {...style, color: '#666'}
 		this.style = style;
 		this.layer.setStyle(style);
 	}

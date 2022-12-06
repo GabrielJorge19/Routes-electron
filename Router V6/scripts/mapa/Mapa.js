@@ -1,6 +1,7 @@
 class Mapa{
 	constructor(geojson = bairros){
-		this.colors = ['#008080', '#20B2AA', '#48D1CC', '#836FFF', '#483D8B'];
+		//this.colors = ['#008080', '#20B2AA', '#48D1CC', '#836FFF', '#483D8B'];
+		this.colors = ['#81C784', '#4CAF50', '#388E3C', '#1B5E20', '#00C853'];
 		this.legenda = new Legenda(this);
 		this.aside = new Aside(this);
 		this.distritos = [];
@@ -114,7 +115,7 @@ class Mapa{
 		this.distritos.map((distrito) => {
 			let objCount = distrito.objects.filter(filterFunction).length;
 			let color = this.colorScale(objCount, maxObjectsCount);
-			distrito.setStyle({color, opacity: 1, weight: 1, fillOpacity: .5});
+			distrito.setStyle({color: color, opacity: 1, weight: 1, fillOpacity: .5});
 			distrito.show();
 		})
 
@@ -125,6 +126,9 @@ class Mapa{
 		let index = Math.floor(value/colorGroupSize);
 		if(index < 0 || index >= colors.length) console.log(index, value, colorGroupSize);
 		return colors[index];
+	}
+	rankObjects(objs){
+		
 	}
 }
  

@@ -2,7 +2,7 @@ class Hidrante{
 	constructor(options){
 
 		this.setAttributes(options);
-		this.colors = {default: 'blue',selected: 'white'};
+		this.colors = {default: 'blue',selected: 'white', evidence: 'yellow'};
 		this.state = "default";
 	}
 	setAttributes(options){
