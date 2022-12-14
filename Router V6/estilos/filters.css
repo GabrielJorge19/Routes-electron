@@ -1,0 +1,10 @@
+.labelLine{
+	width: 100%;
+
+}
+
+#buttonFilters{
+	font-size: 20px;
+	padding: 10px;
+	background-color: #ccc;
+}

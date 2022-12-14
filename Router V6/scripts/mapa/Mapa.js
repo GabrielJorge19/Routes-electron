@@ -6,12 +6,34 @@ class Mapa{
 		this.aside = new Aside(this);
 		this.distritos = [];
 		this.mapa = L.map('map', {zoomControl: false}).setView([-23.555500310051162, -46.63212091504849], 10);
+		this.mapa.on('click', (e) => {        
+	        console.log(e.latlng);
+	    });
+
+
 		this.stretsLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'})
 		this.selectedObjs = [];
 		this.createDistricts(geojson);
+		this.propertiesScore = {
+			situacao: {
+				"possivel de uso": 2,
+				"inoperante": 1.5,
+				"nao localizado": 1
+			},
+			vazao: {
+				excelente: 3,
+				media: 2,
+				fraca: 1.5,
+				seco: 1,
+				"": 0
+			},
+			distance: {
+				maxScore: 5,
+				maxDistance: 5
+			}
+		}
 		console.log('Class distritos loaded!');
 	}	
-
 	showTileLayer(){		
 		this.stretsLayer.addTo(this.mapa);
 	}
@@ -80,6 +102,29 @@ class Mapa{
 
 		return this.orderObjsById(objs);
 	}
+	getObjsByFilters(filters){
+		let objs = [];
+		this.distritos.map((distrito) => {
+			let filteredObjs = this.filterObjs(distrito.objects, filters);
+			objs = objs.concat(filteredObjs);
+		})
+
+		if(objs.length < 1)objs.map(obj => obj.show());
+
+		console.log(objs.length);
+		
+		//return objs;
+	}
+	filterObjs(objs, filters){
+		let filteredObjs = objs.filter((obj) => {
+			let filteredPassed = true;
+			Object.keys(filters).map((filter) => {
+				if(!(filters[filter].indexOf(obj[filter]) != -1))filteredPassed = false;
+			});
+			return filteredPassed;
+		})
+		return filteredObjs;
+	}
 	orderObjsById(objs){
 		objs.sort((a, b) => {
 			if(a.id < b.id){return -1;}
@@ -127,8 +172,46 @@ class Mapa{
 		if(index < 0 || index >= colors.length) console.log(index, value, colorGroupSize);
 		return colors[index];
 	}
-	rankObjects(objs){
-		
+	rankObjects(objs, point){
+		objs.map((obj) => {
+			let distance = this.calcDistante(obj, point) * 1000;
+
+				// Pontuação por distancia 
+			let distanceScore = (this.propertiesScore.distance.maxDistance * 1000) + (Math.floor(-distance) - 1);
+			distanceScore /= this.propertiesScore.distance.maxDistance * 1000;
+			distanceScore *= this.propertiesScore.distance.maxScore;
+			distanceScore = parseFloat(distanceScore.toFixed(1));
+
+
+			obj.score = this.propertiesScore.situacao[obj.situacao];
+			obj.score += this.propertiesScore.vazao[obj.vazao];
+			obj.score += distanceScore;
+		});
+
+		objs.sort((a, b) => {
+			if(a.score == b.score) return 0;
+			if(a.score < b.score) return 1 ;
+			return -1;
+		});
+
+		objs.map((obj) => {
+			let text = obj.score + ", " + obj.situacao + ", " + obj.vazao + ".";
+			console.log(text);
+		})
+
+	}
+	calcDistante(obj1, obj2){
+		let dlat = (obj1.lat > obj2.lat)?obj1.lat - obj2.lat:obj2.lat - obj1.lat;
+		let dlong = (obj1.long > obj2.long)?obj1.long - obj2.long:obj2.long - obj1.long;
+
+			// Distancia cartesiana
+		let d = Math.sqrt(Math.pow(dlat, 2) + Math.pow(dlong, 2));
+			// Distancia que considera a curvatura da terra
+		let dCurva = 1.15 * 6371 *	Math.acos(Math.cos((Math.PI/180) * (90-obj1.lat))*Math.cos((Math.PI/180) * (90-obj2.lat))+Math.sin((Math.PI/180) * (90-obj1.lat))*Math.sin((Math.PI/180) * (90-obj2.lat))*Math.cos((Math.PI/180) * (obj1.long-obj2.long)));
+
+		return parseFloat(dCurva.toFixed(2));
+//		console.log(obj1.lat + ', ' + obj1.long);
+//		console.log(obj2.lat + ', ' + obj2.long);
 	}
 }
  

@@ -3,13 +3,33 @@ let tt = obj => {return obj.id < 1000};
 let ino = obj => {return obj.situacao == 'inoperante'};
 
 setTimeout(() => {
-	console.clear();
+	//console.clear();
 	//selectObjsByFilters(filter);
 }, 300); 
 
 setTimeout(() => {
-	
-}, 400); 
+	let objs = mapa.distritos[0].objects;
+	//objs.map(obj => obj.show());
+	let point = {lat: -23.575315642127155, long: -46.43783569335938}
+
+	//mapa.aside.showAside();
+	//mapa.aside.showFilters();
+	//mapa.filterObjs(objs, filter);
+	//mapa.rankObjects(objs, point);
+	//mapa.calcDistante(objs[0], objs[1]);
+}, 1000); 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -30,25 +50,10 @@ function det(id){
 	obj.setState('evidence');
 }
 
-function selectObjsByFilters(filters){
-	let t = 0;
-	let objs = [];
-	mapa.distritos.map((distrito) => {
-		let filteredObjs = distrito.objects.filter((obj) => {
-			let filteredPassed = true;
-			Object.keys(filters).map((filter) => {
-				if(!(filters[filter].indexOf(obj[filter]) != -1))filteredPassed = false;
-			});
-			return filteredPassed;
-		})
-		objs = objs.concat(filteredObjs);
-	})
-	return objs;
-}
+
 
 let filter = {
-	distrito: ['itaim paulista', 'anhanguera'],
-	tipo: ['coluna']
+	situacao: ['possivel de uso', 'inoperante']
 }
 
 

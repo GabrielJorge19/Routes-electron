@@ -7,7 +7,6 @@ class Distrito{
 		this.objects = [];
 		this.layer = L.geoJSON(feature, {style: this.style, onEachFeature: this.onEachFeature});
 	}
-
 	addObjects(objs){
 		this.objects = this.objects.concat(objs);
 		this.calcStatistics();
@@ -18,11 +17,9 @@ class Distrito{
 	show(){
 		this.layer.addTo(this.mapa);
 	}
-
-	showObjects(options){
-		devDisplayObjects(this.objects);
+	showObjects(objs){
+		objs.map(obj => obj.show());
 	}
-
 	getObjects(ids){
 		
 		let objs = this.objects.filter((obj) => {
@@ -32,14 +29,33 @@ class Distrito{
 		//return this.objects.filter((obj) => {return obj.id == id})
 		return objs;
 	}
-
+	getObjsByFilters(filters){
+		let filteredObjs = this.filterObjs(this.objects, filters);
+		return filteredObjs;
+	}
+	filterObjs(objs, filters){
+		let filteredObjs = objs.filter((obj) => {
+			let filteredPassed = true;
+			Object.keys(filters).map((filter) => {
+				if(!(filters[filter].indexOf(obj[filter]) != -1))filteredPassed = false;
+			});
+			return filteredPassed;
+		})
+		return filteredObjs;
+	}
+	showObjectsByFilters(filters){
+		this.showObjects(this.getObjsByFilters(filters));
+	}
 	onEachFeature(feature, layer){
 
 		function click(e){
-			this._map.fitBounds(e.target.getBounds());
+			//this._map.fitBounds(e.target.getBounds());
 
 			let dist = feature.distrito;
 			console.log(dist.name, dist.getStatistics());
+
+			//let filters = mapa.aside.getFilters();
+			//dist.showObjectsByFilters(filters);
 		}
 
 		function mouseout(e) {
@@ -64,13 +80,11 @@ class Distrito{
 			click: click
 		});
 	}
-
 	setStyle(style){
 		//style = {...style, color: '#666'}
 		this.style = style;
 		this.layer.setStyle(style);
 	}
-
 	calcStatistics(){
 		let statistcsColuns = ["bairro", "tipo", "vazao", "situacao"];
 		let stat = {}
@@ -93,7 +107,6 @@ class Distrito{
 
 		this.statistcs = stat;
 	}
-
 	getStatistics(){
 		return this.statistcs;
 	}
