@@ -21,13 +21,12 @@ class Distrito{
 		objs.map(obj => obj.show());
 	}
 	getObjects(ids){
-		
-		let objs = this.objects.filter((obj) => {
+		return this.objects.filter((obj) => {
 			return ids.indexOf(obj.id) != -1;
 		})
 
-		//return this.objects.filter((obj) => {return obj.id == id})
-		return objs;
+	
+		
 	}
 	getObjsByFilters(filters){
 		let filteredObjs = this.filterObjs(this.objects, filters);
@@ -47,14 +46,20 @@ class Distrito{
 		this.showObjects(this.getObjsByFilters(filters));
 	}
 	onEachFeature(feature, layer){
-
 		function click(e){
-			//this._map.fitBounds(e.target.getBounds());
-
 			let dist = feature.distrito;
-			console.log(dist.name, dist.getStatistics());
 
-			//let filters = mapa.aside.getFilters();
+			//this._map.fitBounds(e.target.getBounds());
+			console.log(dist.name);
+
+			let mapa = e.target._map.mapa;
+			let filters = mapa.aside.getFilters();
+			let objs = dist.getObjsByFilters(filters);
+			let point = {lat: e.latlng.lat, long: e.latlng.lng};
+			//mapa.hideAllObjects();
+			//mapa.rankObjects(objs, point);
+
+			//console.log(filters, objs, point);
 			//dist.showObjectsByFilters(filters);
 		}
 

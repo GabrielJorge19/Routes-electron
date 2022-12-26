@@ -1,6 +1,5 @@
-let ff = (obj) => {return true};
-let tt = obj => {return obj.id < 1000};
-let ino = obj => {return obj.situacao == 'inoperante'};
+
+
 
 setTimeout(() => {
 	//console.clear();
@@ -17,7 +16,10 @@ setTimeout(() => {
 	//mapa.filterObjs(objs, filter);
 	//mapa.rankObjects(objs, point);
 	//mapa.calcDistante(objs[0], objs[1]);
-}, 1000); 
+	//buildGroupByLocation();
+
+	test();
+}, 500); 
 
 
 
@@ -52,13 +54,79 @@ function det(id){
 
 
 
+
+function getVisibleObjects(){
+	let objs = [];
+	mapa.distritos.map((distrito) => {
+		objs = objs.concat(distrito.objects.filter((obj) => {
+			return obj.visible;
+		}))
+	})
+	return objs;
+}
+
+
+function buildGroupByLocation(point, objs = getVisibleObjects()){
+	let group = [];
+	let size = 3;
+
+	objs = objs.filter((obj) => {
+		return (obj.state != "evidence");
+	});
+ 
+	for(let i = 0; i < size; i++){
+		let betterObjs = mapa.rankObjects(objs, objs[0])[0];
+		objs.splice(objs.indexOf(betterObjs), 1);
+		group.push(betterObjs);
+	}
+	console.log(group);
+
+	group.map((obj) => {det(obj.id)})
+
+}
+
+
+
+
+
+
+
+
+
+
+function findDistByName(name){
+	let dist = mapa.distritos.filter((d) => {
+		return name == d.name;
+	})
+	console.log(dist);
+}
+
+
+
+
+
+
+function test(){
+	let obj = mapa.getObjects([1])[0];
+	obj.show();
+	obj.setLabel('1');
+}
+
+
+
+
+
 let filter = {
 	situacao: ['possivel de uso', 'inoperante']
 }
 
 
 /*
-	Mudei as cores
+
+Feito o rank com base na ultima manutenção.
+
+
+
 
 
 

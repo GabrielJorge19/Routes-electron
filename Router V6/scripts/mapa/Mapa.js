@@ -6,30 +6,31 @@ class Mapa{
 		this.aside = new Aside(this);
 		this.distritos = [];
 		this.mapa = L.map('map', {zoomControl: false}).setView([-23.555500310051162, -46.63212091504849], 10);
-		this.mapa.on('click', (e) => {        
-	        console.log(e.latlng);
-	    });
-
-
+		this.mapa['mapa'] = this;
+		//this.mapa.on('click', (e) => {console.log(e.latlng);});
 		this.stretsLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'})
 		this.selectedObjs = [];
 		this.createDistricts(geojson);
 		this.propertiesScore = {
 			situacao: {
-				"possivel de uso": 2,
-				"inoperante": 1.5,
-				"nao localizado": 1
+				"possivel de uso": 0,
+				"inoperante": 0,
+				"nao localizado": 0
 			},
 			vazao: {
-				excelente: 3,
-				media: 2,
-				fraca: 1.5,
-				seco: 1,
+				excelente: 0,
+				media: 0,
+				fraca: 0,
+				seco: 0,
 				"": 0
 			},
 			distance: {
-				maxScore: 5,
-				maxDistance: 5
+				maxScore: 10,
+				maxDistance: 1
+			},
+			date: {
+				maxScore: 0,
+				maxDate: 40
 			}
 		}
 		console.log('Class distritos loaded!');
@@ -77,6 +78,13 @@ class Mapa{
 	}
 	displayObjects(objs){
 		objs.map((obj) => {obj.show();})
+	}
+	hideAllObjects(){
+		this.distritos.map((dist) => {
+			dist.objects.map((obj) => {
+				obj.hide();
+			})
+		})
 	}
 	createDistricts(geojson){
 		for(let i in geojson.features){
@@ -173,6 +181,9 @@ class Mapa{
 		return colors[index];
 	}
 	rankObjects(objs, point){
+		let date = new Date().getTime();
+		//console.log(objs, point);
+
 		objs.map((obj) => {
 			let distance = this.calcDistante(obj, point) * 1000;
 
@@ -182,10 +193,19 @@ class Mapa{
 			distanceScore *= this.propertiesScore.distance.maxScore;
 			distanceScore = parseFloat(distanceScore.toFixed(1));
 
-
+				// Pontuação por propriedade
 			obj.score = this.propertiesScore.situacao[obj.situacao];
 			obj.score += this.propertiesScore.vazao[obj.vazao];
 			obj.score += distanceScore;
+
+				// Pontuação por data
+			let um = obj['ultima manutencao'].split('/');
+			um = new Date(um[2] + '-' + um[1] + '-' + um[0]).getTime();
+			let timeDistance = Math.floor((date - um)/(1000 * 60 * 60 * 24));
+			let score = (2*timeDistance/this.propertiesScore.date.maxDate)-1;
+			score *= this.propertiesScore.date.maxScore;
+			score = (score > this.propertiesScore.date.maxScore)?this.propertiesScore.date.maxScore:score;
+			obj.score += parseFloat(score);
 		});
 
 		objs.sort((a, b) => {
@@ -196,9 +216,13 @@ class Mapa{
 
 		objs.map((obj) => {
 			let text = obj.score + ", " + obj.situacao + ", " + obj.vazao + ".";
-			console.log(text);
-		})
+			//console.log(text);
+		});
 
+		//this.hideAllObjects();
+		//objs[0].show();
+		//console.log(objs[0].score);
+		return objs;
 	}
 	calcDistante(obj1, obj2){
 		let dlat = (obj1.lat > obj2.lat)?obj1.lat - obj2.lat:obj2.lat - obj1.lat;

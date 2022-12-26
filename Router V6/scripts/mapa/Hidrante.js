@@ -1,9 +1,11 @@
 class Hidrante{
 	constructor(options){
 
+		this.label = '';
 		this.setAttributes(options);
 		this.colors = {default: 'blue',selected: 'white', evidence: 'yellow'};
 		this.state = "default";
+		this.visible = false;
 	}
 	setAttributes(options){
 		let attributes = Object.keys(options);
@@ -24,6 +26,11 @@ class Hidrante{
 		icon.bindPopup(`Id: ${options.id}`);
 		this.icon = icon;
 	}
+	setLabel(label){
+		let dom = document.getElementById(this.id);
+		dom.innerText = label;
+		console.log(dom, label);
+	}
 	setState(string){
 		this.state = string;
 
@@ -31,20 +38,24 @@ class Hidrante{
 	}
 	show(){
 		this.icon.addTo(this.mapa).on('click', this.click);
+		this.visible = true;
 	}
 	hide(){
 		this.mapa.removeLayer(this.icon);
+		this.visible = false;
 	}
 	click(){
 		let obj = this.options.obj;
 		let index = obj.selectedObjs.indexOf(obj);
 		let objState = (index != -1)?'default':'selected';
-		obj.setState(objState);
+		//obj.setState(objState);
 
 		if(objState == 'default'){
-			obj.selectedObjs.splice(index, 1);
+		//	obj.selectedObjs.splice(index, 1);
 		} else {
-			obj.selectedObjs.push(obj);
+		// 	obj.selectedObjs.push(obj);
 		}
+
+		buildGroupByLocation(this);
 	}
 }
